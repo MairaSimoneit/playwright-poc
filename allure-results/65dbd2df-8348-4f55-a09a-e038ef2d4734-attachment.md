@@ -1,0 +1,63 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: clickbutton.spec.ts >> Ver spots con permiso de ubicación
+- Location: tests\clickbutton.spec.ts:3:5
+
+# Error details
+
+```
+Error: expect(locator).toBeVisible() failed
+
+Locator: getByRole('button', { name: 'View spots' })
+Expected: visible
+Timeout: 5000ms
+Error: element(s) not found
+
+Call log:
+  - Expect "toBeVisible" with timeout 5000ms
+  - waiting for getByRole('button', { name: 'View spots' })
+
+```
+
+```yaml
+- img "Pantalla de carga Sudakite"
+- heading "SudaKite" [level=1]
+- paragraph: loading...
+- paragraph: 💡 Tip of the day
+- paragraph: Inspect the spreader bar of your harness for cracks.
+- alert
+```
+
+# Test source
+
+```ts
+  1  | import { test, expect } from "@playwright/test";
+  2  | 
+  3  | test("Ver spots con permiso de ubicación", async ({ page }) => {
+  4  |     await page.goto("https://sudakite.com/");
+  5  | 
+  6  |     const botonUbicacion = page.getByRole("button", {
+  7  |         name: "Allow location",
+  8  |     });
+  9  | 
+  10 |     await expect(botonUbicacion).toBeVisible();
+  11 | 
+  12 |     await botonUbicacion.click();
+  13 | 
+  14 |     const botonSpots = page.getByRole("button", {
+  15 |         name: "View spots",
+  16 |     });
+  17 | 
+> 18 |     await expect(botonSpots).toBeVisible();
+     |                              ^ Error: expect(locator).toBeVisible() failed
+  19 | 
+  20 |     await botonSpots.click();
+  21 | });
+  22 | 
+```

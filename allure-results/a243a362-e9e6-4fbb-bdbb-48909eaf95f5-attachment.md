@@ -1,0 +1,76 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: clickbutton.spec.ts >> Click en botón Ver spots
+- Location: tests\clickbutton.spec.ts:3:5
+
+# Error details
+
+```
+Error: expect(locator).toBeVisible() failed
+
+Locator: getByRole('button', { name: 'Ver spots' })
+Expected: visible
+Timeout: 5000ms
+Error: element(s) not found
+
+Call log:
+  - Expect "toBeVisible" with timeout 5000ms
+  - waiting for getByRole('button', { name: 'Ver spots' })
+
+```
+
+```yaml
+- img "Pantalla de carga Sudakite"
+- heading "SudaKite" [level=1]
+- paragraph: loading...
+- paragraph: 💡 Tip of the day
+- paragraph: Always keep your kite high when crossing another rider.
+- alert
+- img
+- heading "Want to see the nearest spots?" [level=2]
+- paragraph: If you allow us to access your location, we can sort spots by distance and show you wind conditions in your area.
+- paragraph: 🔒 Your location is never saved or stored — we only use it right now to improve your experience.
+- button "Allow location":
+  - img
+  - text: Allow location
+- button "Continue without location"
+- paragraph:
+  - text: By using this app you accept our
+  - link "Terms":
+    - /url: /terminos
+  - text: and
+  - link "Privacy Policy":
+    - /url: /privacidad
+  - text: .
+```
+
+# Test source
+
+```ts
+  1  | import { test, expect } from "@playwright/test";
+  2  | 
+  3  | test("Click en botón Ver spots", async ({ page }) => {
+  4  |     // 1. Abrir página
+  5  |     await page.goto("https://sudakite.com/");
+  6  | 
+  7  |     // 2. Verificar que la página cargó
+  8  |     await expect(page).toHaveTitle(/Sudakite/i);
+  9  | 
+  10 |     // 3. Buscar botón "Ver spots"
+  11 |     const botonVerSpots = page.getByRole("button", { name: "Ver spots" });
+  12 | 
+  13 |     // 4. Validar que existe y es visible
+> 14 |     await expect(botonVerSpots).toBeVisible();
+     |                                 ^ Error: expect(locator).toBeVisible() failed
+  15 | 
+  16 |     // 5. Click
+  17 |     await botonVerSpots.click();
+  18 | });
+  19 | 
+```
