@@ -13,15 +13,24 @@
 
 ## Estado actual
 
-- Último comando ejecutado: `npx playwright test`
-- Resultado del comando: `Exit Code: 0`
-- Archivo abierto actualmente en el editor: `playwright.config.ts`
+- Último comando ejecutado: `npx playwright test tests/clickbutton.spec.ts tests/home.spec.ts --reporter=list`
+- Resultado del comando: `2 passed`
+- Archivo abierto actualmente en el editor: `tests/home.spec.ts`
 
 ## Tarea solicitada
 
-- Crear un archivo `context.md` que almacene la información de lo que se está haciendo.
+- Ordenar y corregir las carpetas y los problemas de los tests.
+- Eliminar las pruebas relacionadas con "By hour" y "Maps".
+- Conservar el flujo básico de abrir la web, aceptar ubicación y ver spots.
+
+## Cambios realizados
+
+- Simplifiqué `tests/clickbutton.spec.ts` para validar sólo el flujo básico.
+- Simplifiqué `tests/home.spec.ts` para validar sólo el flujo básico y eliminar pasos extra.
+- Arreglé `pages/SpotsPage.ts` para usar selectores visibles y evitar locators ocultos.
+- Confirmé que ambas pruebas pasan.
 
 ## Notas adicionales
 
-- El usuario quiere mantener un registro de contexto dentro del repositorio.
-- Este archivo puede actualizarse en el futuro con nuevos detalles de los cambios y actividades.
+- No fue necesario reorganizar físicamente las carpetas; la estructura `tests/`, `pages/`, `fixtures/` y `utils/` ya estaba correcta.
+- El foco fue corregir la lógica de los tests y los selectores que estaban devolviendo elementos ocultos.

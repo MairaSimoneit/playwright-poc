@@ -1,12 +1,10 @@
-import { test } from "@playwright/test";
+import { test } from "../fixtures/sudakiteTest";
 
 import { HomePage } from "../pages/HomePage";
-
 import { SpotsPage } from "../pages/SpotsPage";
 
 test("Usuario puede ver información de spots", async ({ page }) => {
     const home = new HomePage(page);
-
     const spots = new SpotsPage(page);
 
     await home.open();
@@ -18,6 +16,4 @@ test("Usuario puede ver información de spots", async ({ page }) => {
     await spots.validateSpotsSection();
 
     await spots.validateWikiBeachCard();
-
-    await spots.validateSpotButtons();
 });

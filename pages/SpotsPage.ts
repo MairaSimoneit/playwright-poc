@@ -1,37 +1,49 @@
-import { Page, expect } from "@playwright/test";
+import { expect, type Page } from "@playwright/test";
 
 export class SpotsPage {
-    constructor(private page: Page) {}
+    constructor(private readonly page: Page) {}
 
-    async validateSpotsSection() {
-        const title = this.page.getByRole("heading", {
-            name: "Spots",
+    async validateSpotsSection(): Promise<void> {
+        const spotsHeading = this.page
+            .locator(
+                'h1:has-text("Spots"):visible, h2:has-text("Spots"):visible, h3:has-text("Spots"):visible',
+            )
+            .first();
+
+        await expect(spotsHeading).toBeVisible({
+            timeout: 15_000,
         });
-
-        await expect(title).toBeVisible();
     }
 
-    async validateWikiBeachCard() {
-        const spotCard = this.page.locator(
-            "#carousel-desktop #spot-card-wiki-beach",
-        );
+    async validateWikiBeachCard(): Promise<void> {
+        const wikiBeachCard = this.page
+            .locator('h3:has-text("Wiki Beach"):visible')
+            .first();
 
-        await expect(spotCard).toBeVisible();
+        await expect(wikiBeachCard).toBeVisible({
+            timeout: 30_000,
+        });
 
         console.log("Wiki Beach card encontrada correctamente");
     }
 
-    async validateSpotButtons() {
-        const spotCard = this.page.locator(
-            "#carousel-desktop #spot-card-wiki-beach",
-        );
+    async validateSpotButtons(): Promise<void> {
+        const wikiBeachCard = this.page
+            .locator('div:has(h3:has-text("Wiki Beach")):visible')
+            .first();
+        const wikiBeachActions = wikiBeachCard
+            .locator("#spot-actions-wiki-beach")
+            .first();
 
-        const buttons = spotCard.locator("button");
+        await expect(wikiBeachActions).toBeVisible({
+            timeout: 10_000,
+        });
 
-        const count = await buttons.count();
+        const buttons = wikiBeachActions.getByRole("button");
+        const buttonsCount = await buttons.count();
 
-        console.log(`Botones encontrados en la card: ${count}`);
+        console.log(`Botones encontrados en la card: ${buttonsCount}`);
 
-        expect(count).toBeGreaterThan(0);
+        expect(buttonsCount).toBeGreaterThan(0);
     }
 }

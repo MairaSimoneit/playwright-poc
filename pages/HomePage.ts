@@ -1,25 +1,33 @@
-import { Page } from "@playwright/test";
+import { expect, type Page } from "@playwright/test";
 
 export class HomePage {
-    constructor(private page: Page) {}
+    constructor(private readonly page: Page) {}
 
-    async open() {
-        await this.page.goto("https://sudakite.com/");
+    async open(): Promise<void> {
+        await this.page.goto("/");
     }
 
-    async allowLocation() {
-        const button = this.page.getByRole("button", {
-            name: "Allow location",
+    async allowLocation(): Promise<void> {
+        const allowLocationButton = this.page.getByRole("button", {
+            name: /allow location/i,
         });
 
-        await button.click();
+        await expect(allowLocationButton).toBeVisible({
+            timeout: 10_000,
+        });
+
+        await allowLocationButton.click();
     }
 
-    async clickViewSpots() {
-        const button = this.page.getByRole("button", {
-            name: "View spots",
+    async clickViewSpots(): Promise<void> {
+        const viewSpotsButton = this.page.getByRole("button", {
+            name: /view spots/i,
         });
 
-        await button.click();
+        await expect(viewSpotsButton).toBeVisible({
+            timeout: 15_000,
+        });
+
+        await viewSpotsButton.click();
     }
 }

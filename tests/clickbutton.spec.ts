@@ -1,30 +1,42 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "../fixtures/sudakiteTest";
 
-test("Ver spots con permiso de ubicación", async ({ page }) => {
-    // 1. Abrir SUDAKITE
-    await page.goto("https://sudakite.com/");
+test("Entrar, aceptar ubicación y ver spots", async ({ page }) => {
+    // 1. Abrir Sudakite
+    await page.goto("/");
 
-    // 2. Buscar botón de ubicación
+    // 2. Buscar el botón para permitir ubicación
     const botonUbicacion = page.getByRole("button", {
-        name: "Allow location",
+        name: /allow location/i,
     });
 
     // 3. Validar que aparece
-    await expect(botonUbicacion).toBeVisible();
+    await expect(botonUbicacion).toBeVisible({
+        timeout: 10_000,
+    });
 
-    // 4. Click para permitir ubicación
+    // 4. Click en Allow location
     await botonUbicacion.click();
 
-    // 5. Esperar que cargue la sección de spots
+    // 5. Esperar que aparezca el botón para ver spots
     const botonSpots = page.getByRole("button", {
-        name: "View spots",
+        name: /view spots/i,
     });
 
-    // 6. Validar que aparece
     await expect(botonSpots).toBeVisible({
-        timeout: 10000,
+        timeout: 15_000,
     });
 
-    // 7. Click en View spots
+    // 6. Click en View spots
     await botonSpots.click();
+
+    // 7. Validar que aparece la card de Wiki Beach
+    const wikiBeachCard = page
+        .locator('h3:has-text("Wiki Beach"):visible')
+        .first();
+
+    await expect(wikiBeachCard).toBeVisible({
+        timeout: 30_000,
+    });
+
+    console.log("Wiki Beach card encontrada correctamente");
 });
