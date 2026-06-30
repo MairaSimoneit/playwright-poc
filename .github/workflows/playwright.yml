@@ -2,9 +2,14 @@ name: Playwright Tests
 
 on:
     push:
-        branches: [main, master]
+        branches:
+            - main
+            - master
+
     pull_request:
-        branches: [main, master]
+        branches:
+            - main
+            - master
 
 permissions:
     contents: read
@@ -12,14 +17,14 @@ permissions:
     id-token: write
 
 concurrency:
-    group: "pages"
-    cancel-in-progress: true
+    group: github-pages
+    cancel-in-progress: false
 
 jobs:
     test:
-        timeout-minutes: 60
-
+        name: Run Playwright tests
         runs-on: ubuntu-latest
+        timeout-minutes: 60
 
         environment:
             name: github-pages
@@ -29,21 +34,22 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@v4
 
-            - name: Setup Node
+            - name: Setup Node.js
               uses: actions/setup-node@v4
               with:
-                  node-version: lts/*
+                  node-version: 22
+                  cache: npm
 
             - name: Install dependencies
               run: npm ci
 
-            - name: Install Playwright Browsers
-              run: npx playwright install --with-deps
+            - name: Install Playwright browsers
+              run: npx playwright install --with-deps chrome
 
             - name: Run Playwright tests
               run: npx playwright test
 
-            - name: Upload Playwright Report as artifact
+            - name: Upload Playwright HTML report as artifact
               if: always()
               uses: actions/upload-artifact@v4
               with:
@@ -52,16 +58,16 @@ jobs:
                   retention-days: 30
 
             - name: Setup GitHub Pages
-              if: always()
+              if: always() && github.event_name == 'push'
               uses: actions/configure-pages@v5
 
-            - name: Upload Pages Artifact
-              if: always()
+            - name: Upload Playwright report to GitHub Pages
+              if: always() && github.event_name == 'push'
               uses: actions/upload-pages-artifact@v3
               with:
-                  path: playwright-report
+                  path: playwright-report/
 
-            - name: Deploy to GitHub Pages
-              if: always()
+            - name: Deploy Playwright report to GitHub Pages
+              if: always() && github.event_name == 'push'
               id: deployment
               uses: actions/deploy-pages@v4

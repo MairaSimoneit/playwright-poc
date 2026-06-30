@@ -3,7 +3,13 @@ import { defineConfig, devices } from "@playwright/test";
 export default defineConfig({
     testDir: "./tests",
 
-    fullyParallel: true,
+    timeout: 30_000,
+
+    expect: {
+        timeout: 10_000,
+    },
+
+    fullyParallel: false,
 
     forbidOnly: !!process.env.CI,
 
@@ -11,30 +17,56 @@ export default defineConfig({
 
     workers: process.env.CI ? 1 : undefined,
 
-    reporter: [["html"], ["allure-playwright"]],
+    reporter: [
+        [
+            "html",
+            {
+                outputFolder: "playwright-report",
+                open: "never",
+            },
+        ],
+        ["allure-playwright"],
+    ],
 
     use: {
-        trace: "on-first-retry",
+        baseURL: "https://sudakite.com",
 
-        headless: false,
+        headless: !!process.env.CI,
+
+        viewport: {
+            width: 1280,
+            height: 720,
+        },
+
+        geolocation: {
+            latitude: -32.9468,
+            longitude: -60.6393,
+        },
 
         permissions: ["geolocation"],
 
-        geolocation: {
-            latitude: -32.95,
-            longitude: -60.66,
-        },
+        ignoreHTTPSErrors: true,
+
+        screenshot: "only-on-failure",
+
+        video: "retain-on-failure",
+
+        trace: "retain-on-failure",
+
+        actionTimeout: 15_000,
+
+        navigationTimeout: 30_000,
     },
 
     projects: [
         {
             name: "Google Chrome",
-
             use: {
                 ...devices["Desktop Chrome"],
-
                 channel: "chrome",
             },
         },
     ],
+
+    outputDir: "test-results",
 });
