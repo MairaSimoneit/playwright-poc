@@ -1,106 +1,127 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
-const jsonReportPath = path.join(__dirname, "..", "reports", "playwright-results.json");
+const jsonReportPath = path.join(
+    __dirname,
+    "..",
+    "reports",
+    "playwright-results.json",
+);
 const outputDir = path.join(__dirname, "..", "public-report");
 const outputFile = path.join(outputDir, "index.html");
 
 function exitWithError(message) {
-  console.error(`ERROR: ${message}`);
-  process.exit(1);
+    console.error(`ERROR: ${message}`);
+    process.exit(1);
 }
 
 if (!fs.existsSync(jsonReportPath)) {
-  exitWithError(`No se encontró el reporte JSON en ${jsonReportPath}. Ejecuta primero "npx playwright test" y asegúrate de que el reporter JSON está configurado en playwright.config.ts.`);
+    exitWithError(
+        `No se encontró el reporte JSON en ${jsonReportPath}. Ejecuta primero "npx playwright test" y asegúrate de que el reporter JSON está configurado en playwright.config.ts.`,
+    );
 }
 
 const raw = fs.readFileSync(jsonReportPath, "utf-8");
 let report;
 
 try {
-  report = JSON.parse(raw);
+    report = JSON.parse(raw);
 } catch (error) {
-  exitWithError(`No se pudo parsear el JSON: ${error.message}`);
+    exitWithError(`No se pudo parsear el JSON: ${error.message}`);
 }
 
 function collectTests(node, tests = []) {
-  if (!node || typeof node !== "object") return tests;
+    if (!node || typeof node !== "object") return tests;
 
-  if (Array.isArray(node.tests)) {
-    for (const test of node.tests) {
-      const result = Array.isArray(test.results) ? test.results[0] : null;
-      tests.push({
-        title: test.title || "<unknown>",
-        status: result?.status || test.status || "unknown",
-        duration: Number(result?.duration ?? 0),
-        file: test.file || node.file || "<unknown>",
-      });
+    if (Array.isArray(node.tests)) {
+        for (const test of node.tests) {
+            const result = Array.isArray(test.results) ? test.results[0] : null;
+            tests.push({
+                title: test.title || "<unknown>",
+                status: result?.status || test.status || "unknown",
+                duration: Number(result?.duration ?? 0),
+                file: test.file || node.file || "<unknown>",
+            });
+        }
     }
-  }
 
-  if (Array.isArray(node.specs)) {
-    for (const spec of node.specs) {
-      collectTests(spec, tests);
+    if (Array.isArray(node.specs)) {
+        for (const spec of node.specs) {
+            collectTests(spec, tests);
+        }
     }
-  }
 
-  if (Array.isArray(node.suites)) {
-    for (const suite of node.suites) {
-      collectTests(suite, tests);
+    if (Array.isArray(node.suites)) {
+        for (const suite of node.suites) {
+            collectTests(suite, tests);
+        }
     }
-  }
 
-  return tests;
+    return tests;
 }
 
 const rootSuites = Array.isArray(report.suites) ? report.suites : [];
 const tests = collectTests({ suites: rootSuites });
 
 const counts = {
-  total: 0,
-  passed: 0,
-  failed: 0,
-  skipped: 0,
+    total: 0,
+    passed: 0,
+    failed: 0,
+    skipped: 0,
 };
 
 const specMap = new Map();
 let totalDurationMs = 0;
 
 for (const test of tests) {
-  const status = test.status || test.outcome || "unknown";
-  const duration = Number(test.duration ?? 0);
-  const file = test.file || (test.location && test.location.file) || "<unknown>";
-  const specKey = file.replace(/\\/g, "/");
+    const status = test.status || test.outcome || "unknown";
+    const duration = Number(test.duration ?? 0);
+    const file =
+        test.file || (test.location && test.location.file) || "<unknown>";
+    const specKey = file.replace(/\\/g, "/");
 
-  counts.total += 1;
-  if (status === "passed") counts.passed += 1;
-  else if (status === "failed") counts.failed += 1;
-  else if (status === "skipped") counts.skipped += 1;
-  else counts.total += 0;
+    counts.total += 1;
+    if (status === "passed") counts.passed += 1;
+    else if (status === "failed") counts.failed += 1;
+    else if (status === "skipped") counts.skipped += 1;
+    else counts.total += 0;
 
-  totalDurationMs += duration;
+    totalDurationMs += duration;
 
-  const existing = specMap.get(specKey) || { file: specKey, total: 0, passed: 0, failed: 0, skipped: 0, durationMs: 0, tests: [] };
-  existing.total += 1;
-  existing.durationMs += duration;
-  if (status === "passed") existing.passed += 1;
-  if (status === "failed") existing.failed += 1;
-  if (status === "skipped") existing.skipped += 1;
-  existing.tests.push({ title: test.title, status, durationMs: duration });
-  specMap.set(specKey, existing);
+    const existing = specMap.get(specKey) || {
+        file: specKey,
+        total: 0,
+        passed: 0,
+        failed: 0,
+        skipped: 0,
+        durationMs: 0,
+        tests: [],
+    };
+    existing.total += 1;
+    existing.durationMs += duration;
+    if (status === "passed") existing.passed += 1;
+    if (status === "failed") existing.failed += 1;
+    if (status === "skipped") existing.skipped += 1;
+    existing.tests.push({ title: test.title, status, durationMs: duration });
+    specMap.set(specKey, existing);
 }
 
-const specList = Array.from(specMap.values()).sort((a, b) => b.durationMs - a.durationMs);
+const specList = Array.from(specMap.values()).sort(
+    (a, b) => b.durationMs - a.durationMs,
+);
 const buildDate = new Date().toISOString();
-const overallStatus = report.status || (counts.failed > 0 ? "failed" : "passed");
+const overallStatus =
+    report.status || (counts.failed > 0 ? "failed" : "passed");
 
 function formatMs(ms) {
-  if (ms === 0) return "0 ms";
-  const seconds = Math.floor(ms / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = seconds % 60;
-  const msRem = ms % 1000;
-  return minutes > 0 ? `${minutes}m ${remainingSeconds}s` : `${remainingSeconds}s ${msRem}ms`;
+    if (ms === 0) return "0 ms";
+    const seconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    const msRem = ms % 1000;
+    return minutes > 0
+        ? `${minutes}m ${remainingSeconds}s`
+        : `${remainingSeconds}s ${msRem}ms`;
 }
 
 const html = `<!DOCTYPE html>
@@ -389,8 +410,8 @@ const html = `<!DOCTYPE html>
         <div class="card">
           <h3>Desglose por spec</h3>
           ${specList
-            .map(
-              (spec) => `
+              .map(
+                  (spec) => `
               <article class="spec-item">
                 <div>
                   <div class="spec-title">${spec.file}</div>
@@ -402,9 +423,9 @@ const html = `<!DOCTYPE html>
                 </div>
                 <span class="meta-tag">${spec.total} tests</span>
               </article>
-            `
-            )
-            .join("")}
+            `,
+              )
+              .join("")}
         </div>
       </section>
     </div>
@@ -413,7 +434,7 @@ const html = `<!DOCTYPE html>
 `;
 
 if (!fs.existsSync(outputDir)) {
-  fs.mkdirSync(outputDir, { recursive: true });
+    fs.mkdirSync(outputDir, { recursive: true });
 }
 
 fs.writeFileSync(outputFile, html, "utf-8");
