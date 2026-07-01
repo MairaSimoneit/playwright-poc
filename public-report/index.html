@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sudakite QA Automation Dashboard</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #f5f7fb;
+        color: #111827;
+        line-height: 1.5;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      .page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 32px 20px 60px;
+      }
+
+      header {
+        margin-bottom: 32px;
+      }
+
+      .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        color: #6366f1;
+        font-size: 0.85rem;
+        margin-bottom: 12px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(2rem, 3.2vw, 3rem);
+        letter-spacing: -0.04em;
+      }
+
+      .intro {
+        max-width: 720px;
+        margin-top: 16px;
+        font-size: 1rem;
+        color: #475569;
+      }
+
+      .grid {
+        display: grid;
+        gap: 20px;
+      }
+
+      .summary {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      }
+
+      .card {
+        background: #ffffff;
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: 24px;
+        padding: 24px;
+        box-shadow: 0 18px 45px rgba(15, 23, 42, 0.06);
+      }
+
+      .card h2 {
+        margin: 0 0 12px;
+        font-size: 1rem;
+        color: #0f172a;
+      }
+
+      .stat {
+        font-size: 2.35rem;
+        font-weight: 700;
+        margin: 0;
+      }
+
+      .stat + p {
+        margin: 8px 0 0;
+        color: #64748b;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0.65rem 0.95rem;
+        border-radius: 999px;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+
+      .badge.success {
+        background: #dcfce7;
+        color: #166534;
+      }
+
+      .badge.warning {
+        background: #fef9c3;
+        color: #92400e;
+      }
+
+      .badge.danger {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+
+      .section {
+        display: grid;
+        gap: 20px;
+      }
+
+      .section h3 {
+        margin: 0;
+        font-size: 1.25rem;
+      }
+
+      .spec-list,
+      .stack-list,
+      .what-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 12px;
+      }
+
+      .spec-item {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        padding: 16px;
+        border-radius: 18px;
+        background: #f8fafc;
+        border: 1px solid rgba(100, 116, 139, 0.12);
+      }
+
+      .spec-meta {
+        color: #475569;
+        font-size: 0.95rem;
+        display: grid;
+        gap: 6px;
+      }
+
+      .spec-title {
+        font-weight: 700;
+        color: #0f172a;
+      }
+
+      .meta-tag {
+        display: inline-flex;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: #eef2ff;
+        color: #3730a3;
+        font-size: 0.78rem;
+        font-weight: 700;
+      }
+
+      .button-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 14px 20px;
+        border-radius: 999px;
+        border: none;
+        text-decoration: none;
+        font-weight: 700;
+        color: #ffffff;
+        background: #4f46e5;
+        transition: transform 0.2s ease, background 0.2s ease;
+      }
+
+      .button.secondary {
+        background: #0f172a;
+      }
+
+      .button:hover {
+        transform: translateY(-1px);
+      }
+
+      @media (max-width: 720px) {
+        .page {
+          padding: 24px 16px 40px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header>
+        <div class="eyebrow">Sudakite QA Automation Dashboard</div>
+        <h1>Resultados de la última ejecución de Playwright</h1>
+        <p class="intro">Este dashboard resume el estado de la suite de pruebas de Sudakite usando datos reales de Playwright. Incluye métricas clave, ejecución por spec y enlaces al reporte técnico de Playwright.</p>
+      </header>
+
+      <div class="grid summary">
+        <section class="card">
+          <h2>Estado general</h2>
+          <p class="stat">PASSED</p>
+          <p>Última actualización: 2026-07-01T02:32:14.259Z</p>
+        </section>
+
+        <section class="card">
+          <h2>Total de tests</h2>
+          <p class="stat">2</p>
+          <p>Tests ejecutados en esta corrida.</p>
+        </section>
+
+        <section class="card">
+          <h2>Duración total</h2>
+          <p class="stat">52s 347ms</p>
+          <p>Tiempo aproximado de ejecución de los tests.</p>
+        </section>
+      </div>
+
+      <div class="grid summary" style="margin-top: 20px;">
+        <section class="card">
+          <h2>Tests pasados</h2>
+          <p class="stat">2</p>
+          <p>Pruebas con resultado exitoso.</p>
+        </section>
+
+        <section class="card">
+          <h2>Tests fallidos</h2>
+          <p class="stat">0</p>
+          <p>Pruebas que requieren investigación.</p>
+        </section>
+
+        <section class="card">
+          <h2>Tests omitidos</h2>
+          <p class="stat">0</p>
+          <p>Pruebas que no se ejecutaron en esta corrida.</p>
+        </section>
+      </div>
+
+      <div class="section" style="margin-top: 32px;">
+        <div class="card">
+          <div class="button-group">
+            <a class="button" href="./playwright-report/index.html" target="_blank">Abrir reporte de Playwright</a>
+            <a class="button secondary" href="#specs">Ver desglose por spec</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" style="margin-top: 32px;">
+        <div class="card">
+          <h3>Qué valida esta suite</h3>
+          <ul class="what-list">
+            <li>Flujo de ubicación y geolocalización en Sudakite.</li>
+            <li>Acceso a la sección de spots y navegación principal.</li>
+            <li>Integración con reportes técnicos para debugging y análisis.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="grid summary" style="margin-top: 32px;">
+        <section class="card">
+          <h3>Stack usado</h3>
+          <ul class="stack-list">
+            <li>Playwright</li>
+            <li>TypeScript</li>
+            <li>GitHub Actions</li>
+            <li>GitHub Pages</li>
+            <li>Allure</li>
+          </ul>
+        </section>
+      </div>
+
+      <section id="specs" class="section" style="margin-top: 32px;">
+        <div class="card">
+          <h3>Desglose por spec</h3>
+          
+              <article class="spec-item">
+                <div>
+                  <div class="spec-title">home.spec.ts</div>
+                  <div class="spec-meta">
+                    <span>1 tests</span>
+                    <span>1 passed • 0 failed • 0 skipped</span>
+                    <span>Duración: 26s 594ms</span>
+                  </div>
+                </div>
+                <span class="meta-tag">1 tests</span>
+              </article>
+            
+              <article class="spec-item">
+                <div>
+                  <div class="spec-title">clickbutton.spec.ts</div>
+                  <div class="spec-meta">
+                    <span>1 tests</span>
+                    <span>1 passed • 0 failed • 0 skipped</span>
+                    <span>Duración: 25s 753ms</span>
+                  </div>
+                </div>
+                <span class="meta-tag">1 tests</span>
+              </article>
+            
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

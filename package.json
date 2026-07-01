@@ -2,7 +2,11 @@
   "name": "playwright-poc",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "npx playwright test",
+    "dashboard": "node scripts/generate-dashboard.js",
+    "ci:dashboard": "npm run test && npm run dashboard"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

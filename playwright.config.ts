@@ -25,6 +25,12 @@ export default defineConfig({
                 open: "never",
             },
         ],
+        [
+            "json",
+            {
+                outputFile: "reports/playwright-results.json",
+            },
+        ],
         ["allure-playwright"],
     ],
 

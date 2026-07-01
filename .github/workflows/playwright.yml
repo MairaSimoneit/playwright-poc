@@ -22,7 +22,7 @@ concurrency:
 
 jobs:
     test:
-        name: Run Playwright tests
+        name: Run Playwright tests and publish dashboard
         runs-on: ubuntu-latest
         timeout-minutes: 60
 
@@ -49,6 +49,15 @@ jobs:
             - name: Run Playwright tests
               run: npx playwright test
 
+            - name: Generate dashboard HTML
+              run: |
+                  node scripts/generate-dashboard.js
+
+            - name: Copy Playwright report into public-report
+              run: |
+                  mkdir -p public-report
+                  cp -r playwright-report public-report/playwright-report
+
             - name: Upload Playwright HTML report as artifact
               if: always()
               uses: actions/upload-artifact@v4
@@ -61,13 +70,13 @@ jobs:
               if: always() && github.event_name == 'push'
               uses: actions/configure-pages@v5
 
-            - name: Upload Playwright report to GitHub Pages
+            - name: Upload public report to GitHub Pages
               if: always() && github.event_name == 'push'
               uses: actions/upload-pages-artifact@v3
               with:
-                  path: playwright-report/
+                  path: public-report/
 
-            - name: Deploy Playwright report to GitHub Pages
+            - name: Deploy public report to GitHub Pages
               if: always() && github.event_name == 'push'
               id: deployment
               uses: actions/deploy-pages@v4
